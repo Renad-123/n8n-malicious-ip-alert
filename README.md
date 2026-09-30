@@ -21,44 +21,43 @@ Manually checking every IP in a list of alerts is slow and error-prone. This wor
 
 ## Tech Stack
 
-| Tool | Purpose |
-|---|---|
-| n8n | Workflow automation |
-| VirusTotal API v3 | IP reputation lookup |
-| Google Gemini | AI-generated email body |
-| SMTP (Gmail) | Email delivery |
+| Tool              | Purpose                 |
+| ----------------- | ----------------------- |
+| n8n               | Workflow automation     |
+| VirusTotal API v3 | IP reputation lookup    |
+| Google Gemini     | AI-generated email body |
+| SMTP (Gmail)      | Email delivery          |
 
 ## Workflow Nodes
 
-| Node | Type | Purpose |
-|---|---|---|
-| Get Token / Get Alerts | HTTP Request | Authenticate and fetch alerts |
-| Split Out All alerts | Split Out | One item per alert |
-| Get All Info about alert | HTTP Request | Full alert details |
-| Split Out dest & src | Split Out | Separate source and destination IPs |
-| Aggregate src & dest without null | Aggregate | Collect all IPs, ignore empty values |
-| All Public IPs | Code | Deduplicate and drop private IPs |
-| VirusTotal HTTP Request | HTTP Request | Look up each IP |
-| Format VT Results | Edit Fields | Keep the useful fields |
-| Sort Malicious IPs | Sort | Order by `malicious`, descending |
-| Top Malicious IP | Limit | Keep the first item only |
-| Malicious > 5 | IF | Threshold check |
-| Write Alert Email | Basic LLM Chain + Gemini | Generate the HTML email |
-| Send Alert Email | Send Email (SMTP) | Deliver the alert |
+| Node                              | Type                     | Purpose                              |
+| --------------------------------- | ------------------------ | ------------------------------------ |
+| Get Token / Get Alerts            | HTTP Request             | Authenticate and fetch alerts        |
+| Split Out All alerts              | Split Out                | One item per alert                   |
+| Get All Info about alert          | HTTP Request             | Full alert details                   |
+| Split Out dest & src              | Split Out                | Separate source and destination IPs  |
+| Aggregate src & dest without null | Aggregate                | Collect all IPs, ignore empty values |
+| All Public IPs                    | Code                     | Deduplicate and drop private IPs     |
+| VirusTotal HTTP Request           | HTTP Request             | Look up each IP                      |
+| Format VT Results                 | Edit Fields              | Keep the useful fields               |
+| Sort Malicious IPs                | Sort                     | Order by `malicious`, descending     |
+| Top Malicious IP                  | Limit                    | Keep the first item only             |
+| Malicious > 5                     | IF                       | Threshold check                      |
+| Write Alert Email                 | Basic LLM Chain + Gemini | Generate the HTML email              |
+| Send Alert Email                  | Send Email (SMTP)        | Deliver the alert                    |
 
 ## Results
 
 Out of 12 public IPs, four had detections:
 
-| IP | Malicious | Owner |
-|---|---|---|
-| 185.220.101.42 | **17** | Stiftung Erneuerbare Freiheit |
-| 94.102.49.190 | 8 | IP Volume inc |
-| 103.224.182.251 | 6 | Trellian Pty. Limited |
-| 45.142.214.89 | 2 | Clouvider Limited |
+| IP              | Malicious | Owner                         |
+| --------------- | --------- | ----------------------------- |
+| 185.220.101.42  | **17**    | Stiftung Erneuerbare Freiheit |
+| 94.102.49.190   | 8         | IP Volume inc                 |
+| 103.224.182.251 | 6         | Trellian Pty. Limited         |
+| 45.142.214.89   | 2         | Clouvider Limited             |
 
 The most dangerous IP (`185.220.101.42`) triggered the alert email:
-
 
 ## Setup
 
@@ -75,6 +74,3 @@ The most dangerous IP (`185.220.101.42`) triggered the alert email:
 - The free VirusTotal tier allows 4 requests per minute. Use batching (1 item per batch, 15 s interval) for larger lists.
 - The threshold (`5`) can be changed in the `Malicious > 5` node.
 - Never commit API keys, tokens, or passwords.
-
-
-
