@@ -77,10 +77,4 @@ The most dangerous IP (`185.220.101.42`) triggered the alert email:
 - Never commit API keys, tokens, or passwords.
 
 
-- Replace the manual trigger with a Schedule Trigger.
-- Send one email that includes all dangerous IPs.
-- Add Telegram or Slack notifications.
 
-
-**Your Name**
-[LinkedIn](https://linkedin.com/in/your-profile)
